@@ -5,6 +5,7 @@ import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -21,18 +22,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
+import { SocialButtons } from "../components/social-buttons";
 
-const formSchema = z.object({
-  name: z.string().min(1, { error: "Name is required"}),
-  email: z.email(),
-  password: z.string().min(1, { error: "Password is required." }),
-  confirmPassword: z.string().min(1, { error: "Password is required." }),
-})
-.refine((data) => data.password === data.confirmPassword, {
-  error: "Password don't match",
-  path: ["confirmPassword"]
-})
+
+const formSchema = z
+  .object({
+    name: z.string().min(1, { error: "Name is required" }),
+    email: z.email(),
+    password: z.string().min(1, { error: "Password is required." }),
+    confirmPassword: z.string().min(1, { error: "Password is required." }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: "Password don't match",
+    path: ["confirmPassword"],
+  });
 
 export const SignUpView = () => {
   const router = useRouter();
@@ -57,11 +60,12 @@ export const SignUpView = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/"
       },
       {
         onSuccess: () => {
           setPending(false);
-          router.push("/");
+          router.push("/")
         },
         onError: (context) => {
           setPending(false);
@@ -69,7 +73,6 @@ export const SignUpView = () => {
         },
       }
     );
-
   };
 
   return (
@@ -80,7 +83,9 @@ export const SignUpView = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Let&apos;s get started!</h1>
+                  <h1 className="text-2xl font-bold">
+                    Let&apos;s get started!
+                  </h1>
                   <p className="text-muted-foreground text-balance">
                     Create your account
                   </p>
@@ -176,24 +181,11 @@ export const SignUpView = () => {
                     Or continue with
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    Google
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    Github
-                  </Button>
-                </div>
+                <SocialButtons
+                  pending={pending}
+                  setError={(val) => setError(val)}
+                  setPending={(val) => setPending(val)}
+                />
                 <div className="text-center text-sm">
                   Already have an account? {"  "}
                   <Link
