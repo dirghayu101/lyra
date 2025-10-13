@@ -5,7 +5,6 @@ import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
+import { SocialButtons } from "../components/social-buttons";
 
 const formSchema = z.object({
   email: z.email(),
@@ -29,7 +29,6 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -48,11 +47,11 @@ export const SignInView = () => {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/"
       },
       {
         onSuccess: () => {
           setPending(false);
-          router.push("/");
         },
         onError: (context) => {
           setPending(false);
@@ -128,24 +127,11 @@ export const SignInView = () => {
                     Or continue with
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    Google
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    disabled={pending}
-                  >
-                    Github
-                  </Button>
-                </div>
+                <SocialButtons
+                  pending={pending}
+                  setError={(val) => setError(val)}
+                  setPending={(val) => setPending(val)}
+                />
                 <div className="text-center text-sm">
                   Don&apos;t have an account? {"  "}
                   <Link
