@@ -121,6 +121,14 @@
   }
 }
 
+/* Custom rule for cursor pointer */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled){
+    cursor: pointer;
+  }
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.1450 0 0);
