@@ -24,27 +24,7 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 
-type UserSessionData = {
-  user: {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    email: string;
-    emailVerified: boolean;
-    name: string;
-    image?: string | null | undefined;
-  };
-  session: {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
-    expiresAt: Date;
-    token: string;
-    ipAddress?: string | null | undefined;
-    userAgent?: string | null | undefined;
-  };
-};
+type UserSessionData = NonNullable<ReturnType<typeof authClient.useSession>["data"]>
 
 const DashboardUserMobileButton = ({ data, onLogout }: { data: UserSessionData, onLogout: () => void }) => {
   return (
