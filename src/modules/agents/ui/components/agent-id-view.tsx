@@ -1,13 +1,18 @@
 "use client";
-import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { VideoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { AgentIdViewHeader } from "./agent-id-view-header";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Badge } from "@/components/ui/badge";
-import { VideoIcon } from "lucide-react";
+import { useTRPC } from "@/trpc/client";
+import { useConfirm } from "../../hooks/use-confirm";
+import { UpdateAgentDialog } from "./update-agent-dialog";
 
 type Props = {
   agentId: string;
@@ -15,17 +20,53 @@ type Props = {
 
 export const AgentIdView = ({ agentId }: Props) => {
   const trpc = useTRPC();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [updateAgentDialogOpen, setUpdateAgentDialogOpen] = useState(false)
+
   const { data } = useSuspenseQuery(
     trpc.agents.getOne.queryOptions({ id: agentId })
   );
 
+  const removeAgent = useMutation(
+    trpc.agents.remove.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
+        // TODO: Invalidate free tier usage.
+        router.push("/agents")
+      },
+
+      onError: (error) => {
+        toast.error(error.message)
+      }
+    })
+  )
+
+  const [RemoveConfirmation, confirmRemove] = useConfirm(
+    "Are you sure?",
+    `The following action will remove ${data.meetingCount} associated ${data.meetingCount === 1 ? "meeting": "meetings"}.`
+  )
+
+  const handleRemoveAgent = async () => {
+    const ok = await confirmRemove();
+    if(!ok) return;
+    await removeAgent.mutateAsync({id: agentId});
+  }
+
   return (
+    <>
+    <RemoveConfirmation />
+    <UpdateAgentDialog 
+      open={updateAgentDialogOpen}
+      onOpenChange={setUpdateAgentDialogOpen}
+      initialValues={data}
+    />
     <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
         <AgentIdViewHeader
             agentId={agentId}
             agentName={data.name}
-            onEdit={() => {}}
-            onRemove={() => {}}
+            onEdit={() => setUpdateAgentDialogOpen(true)}
+            onRemove={handleRemoveAgent}
         />
         <div className="bg-white rounded-lg border">
           <div className="px-4 py-5 gap-y-5 flex flex-col col-span-5">
@@ -52,6 +93,7 @@ export const AgentIdView = ({ agentId }: Props) => {
           </div>
         </div>
     </div>
+    </>
   )
 };
 
