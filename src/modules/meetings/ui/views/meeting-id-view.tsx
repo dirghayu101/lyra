@@ -95,6 +95,12 @@ export const MeetingIdView = ({ meetingId }: Props) => {
             meetingId={meetingId}
           />
         )}
+        { !isCancelled && !isProcessing && !isCompleted && !isActive && !isUpcoming && (
+          <div className="bg-white rounded-lg p-4"> 
+            <p>Unknown meeting status: {data.status}</p>
+          </div>
+        )
+        }
       </div>
     </>
   );
