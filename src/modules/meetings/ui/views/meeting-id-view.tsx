@@ -15,6 +15,10 @@ import { useTRPC } from "@/trpc/client";
 import { MeetingIdViewHeader } from "../components/meeting-id-view-header";
 import { useConfirm } from "@/modules/agents/hooks/use-confirm";
 import { UpdateMeetingDialog } from "../components/update-meeting-dialog";
+import { UpcomingState } from "../components/upcoming-state";
+import { ActiveState } from "../components/active-state";
+import { CancelledState } from "../components/cancelled-state";
+import { ProcessingState } from "../components/processing-state";
 
 type Props = {
   meetingId: string;
@@ -49,16 +53,22 @@ export const MeetingIdView = ({ meetingId }: Props) => {
 
   const handleRemoveMeeting = async () => {
     const ok = await confirmRemove();
-    
-    if(!ok) return;
 
-    await removeMeeting.mutateAsync({id: meetingId});
-  }
+    if (!ok) return;
+
+    await removeMeeting.mutateAsync({ id: meetingId });
+  };
+
+  const isActive = data.status === "active";
+  const isUpcoming = data.status === "upcoming";
+  const isCancelled = data.status === "cancelled";
+  const isCompleted = data.status === "completed";
+  const isProcessing = data.status === "processing";
 
   return (
     <>
       <RemoveConfirmation />
-      <UpdateMeetingDialog 
+      <UpdateMeetingDialog
         open={updateMeetingDialogOpen}
         onOpenChange={setUpdateMeetingDialogOpen}
         initialValues={data}
@@ -70,7 +80,21 @@ export const MeetingIdView = ({ meetingId }: Props) => {
           onEdit={() => setUpdateMeetingDialogOpen(true)}
           onRemove={handleRemoveMeeting}
         />
-        {JSON.stringify(data, null, 2)}
+        {isCancelled && <CancelledState />}
+        {isProcessing && <ProcessingState />}
+        {isCompleted && <div>Completed</div>}
+        {isUpcoming && (
+          <UpcomingState
+            meetingId={meetingId}
+            onCancelMeeting={() => {}}
+            isCancelling={false}
+          />
+        )}
+        {isActive && (
+          <ActiveState 
+            meetingId={meetingId}
+          />
+        )}
       </div>
     </>
   );
