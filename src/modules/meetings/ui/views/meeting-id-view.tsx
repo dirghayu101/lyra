@@ -19,6 +19,7 @@ import { UpcomingState } from "../components/upcoming-state";
 import { ActiveState } from "../components/active-state";
 import { CancelledState } from "../components/cancelled-state";
 import { ProcessingState } from "../components/processing-state";
+import { CompletedState } from "../components/completed-state";
 
 type Props = {
   meetingId: string;
@@ -82,7 +83,7 @@ export const MeetingIdView = ({ meetingId }: Props) => {
         />
         {isCancelled && <CancelledState />}
         {isProcessing && <ProcessingState />}
-        {isCompleted && <div>Completed</div>}
+        {isCompleted && <CompletedState data={data} />}
         {isUpcoming && (
           <UpcomingState
             meetingId={meetingId}
@@ -90,17 +91,16 @@ export const MeetingIdView = ({ meetingId }: Props) => {
             isCancelling={false}
           />
         )}
-        {isActive && (
-          <ActiveState 
-            meetingId={meetingId}
-          />
-        )}
-        { !isCancelled && !isProcessing && !isCompleted && !isActive && !isUpcoming && (
-          <div className="bg-white rounded-lg p-4"> 
-            <p>Unknown meeting status: {data.status}</p>
-          </div>
-        )
-        }
+        {isActive && <ActiveState meetingId={meetingId} />}
+        {!isCancelled &&
+          !isProcessing &&
+          !isCompleted &&
+          !isActive &&
+          !isUpcoming && (
+            <div className="bg-white rounded-lg p-4">
+              <p>Unknown meeting status: {data.status}</p>
+            </div>
+          )}
       </div>
     </>
   );
