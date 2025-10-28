@@ -8,7 +8,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs,  TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MeetingGetOne } from "../../types";
-import { SummaryContent, VideoContent } from "./completed-state-components";
+import { ChatContent, SummaryContent, TranscriptContent, VideoContent } from "./completed-state-components";
 
 type Props = {
   data: MeetingGetOne;
@@ -58,7 +58,12 @@ export const CompletedState = ({ data }: Props) => {
           duration={data.duration}
           summary={data.summary}
         />
+        <TranscriptContent 
+          meetingId={data.id}
+        />
+        <ChatContent meetingId={data.id} meetingName={data.name} />
       </Tabs>
     </div>
   );
 };
+
