@@ -1,7 +1,10 @@
+import { polar, checkout, portal } from "@polar-sh/better-auth"; 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+
 import { db } from "@/db";
 import * as schema from "@/db/schema"
+import { polarClient } from "./polar";
 
 const requiredEnvVars = {
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
@@ -17,6 +20,19 @@ for (const [key, value] of Object.entries(requiredEnvVars)) {
 }
 
 export const auth = betterAuth({
+    plugins: [
+        polar({ 
+            client: polarClient, 
+            createCustomerOnSignUp: true, 
+            use: [ 
+                checkout({
+                    authenticatedUsersOnly: true,
+                    successUrl: "/upgrade"
+                }),
+                portal(),
+            ], 
+        }) 
+    ],
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {

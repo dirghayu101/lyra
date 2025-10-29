@@ -19,6 +19,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { DashboardUserButton } from "./dashboard-user-button";
+import { DashboardTrial } from "./dashboard-trial";
 
 type DashboardIcon = {
   icon: React.ElementType;
@@ -103,6 +104,7 @@ export const DashboardSidebar = () => {
         <DashboardIconGroup dashboardIcons={secondSection} />
       </SidebarContent>
       <SidebarFooter className="text-white">
+        <DashboardTrial />
         <DashboardUserButton />
       </SidebarFooter>
     </Sidebar>

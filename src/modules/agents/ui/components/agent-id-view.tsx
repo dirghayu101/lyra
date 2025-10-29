@@ -33,6 +33,9 @@ export const AgentIdView = ({ agentId }: Props) => {
       onSuccess: async () => {
         await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
         // TODO: Invalidate free tier usage.
+         await queryClient.invalidateQueries(
+          trpc.premium.getFreeUsage.queryOptions(),
+        );
         router.push("/agents")
       },
 
