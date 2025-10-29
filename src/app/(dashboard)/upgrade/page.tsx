@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { auth } from "@/lib/auth";
 import { getQueryClient, trpc } from "@/trpc/server";
-import { UpgradeView } from "@/modules/premium/ui/views/upgrade-view";
+import { UpgradeView, UpgradeViewError, UpgradeViewLoading } from "@/modules/premium/ui/views/upgrade-view";
 
 const Page = async () => {
     const session = await auth.api.getSession({
@@ -27,8 +27,8 @@ const Page = async () => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={<p>TODO</p>}>
-                <ErrorBoundary fallback={<p>TODO</p>}>
+            <Suspense fallback={<UpgradeViewLoading />}>
+                <ErrorBoundary fallback={<UpgradeViewError />}>
                     <UpgradeView />
                 </ErrorBoundary>
             </Suspense>

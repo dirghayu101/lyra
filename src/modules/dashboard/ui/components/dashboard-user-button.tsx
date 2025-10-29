@@ -24,9 +24,17 @@ import { GeneratedAvatar } from "@/components/generated-avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 
-type UserSessionData = NonNullable<ReturnType<typeof authClient.useSession>["data"]>
+type UserSessionData = NonNullable<
+  ReturnType<typeof authClient.useSession>["data"]
+>;
 
-const DashboardUserMobileButton = ({ data, onLogout }: { data: UserSessionData, onLogout: () => void }) => {
+const DashboardUserMobileButton = ({
+  data,
+  onLogout,
+}: {
+  data: UserSessionData;
+  onLogout: () => void;
+}) => {
   return (
     <Drawer>
       <DrawerTrigger className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between bg-white/5 hover:bg-white/10 overflow-hidden gap-x-2">
@@ -47,22 +55,25 @@ const DashboardUserMobileButton = ({ data, onLogout }: { data: UserSessionData, 
         </div>
         <ChevronDownIcon className="size-4 shrink-0" />
       </DrawerTrigger>
-        <DrawerContent>
-            <DrawerHeader>
-                <DrawerTitle>{data.user.name}</DrawerTitle>
-                <DrawerDescription>{data.user.email}</DrawerDescription>
-            </DrawerHeader>
-            <DrawerFooter>
-                <Button variant="outline" onClick={()=>{}}>
-                    <CreditCardIcon className="size-4 text-black" />
-                    Billing
-                </Button>
-                <Button variant="outline" onClick={onLogout}>
-                    <LogOutIcon className="size-4 text-black" />
-                    Logout
-                </Button>
-            </DrawerFooter>
-        </DrawerContent>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{data.user.name}</DrawerTitle>
+          <DrawerDescription>{data.user.email}</DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <Button
+            variant="outline"
+            onClick={() => authClient.customer.portal()}
+          >
+            <CreditCardIcon className="size-4 text-black" />
+            Billing
+          </Button>
+          <Button variant="outline" onClick={onLogout}>
+            <LogOutIcon className="size-4 text-black" />
+            Logout
+          </Button>
+        </DrawerFooter>
+      </DrawerContent>
     </Drawer>
   );
 };
@@ -87,7 +98,7 @@ export const DashboardUserButton = () => {
   }
 
   if (isMobile) {
-    return <DashboardUserMobileButton data={data} onLogout={onLogout}/>
+    return <DashboardUserMobileButton data={data} onLogout={onLogout} />;
   }
 
   return (
@@ -121,7 +132,10 @@ export const DashboardUserButton = () => {
           <ChevronDownIcon className="size-4 shrink-0" />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer flex items-center justify-between">
+        <DropdownMenuItem
+          className="cursor-pointer flex items-center justify-between"
+          onClick={() => authClient.customer.portal()}
+        >
           Billing
           <CreditCardIcon className="size-4" />
         </DropdownMenuItem>
